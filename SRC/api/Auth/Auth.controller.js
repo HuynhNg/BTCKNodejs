@@ -27,7 +27,7 @@ class AuthController{
         catch(err){
             return res.status(500).json({
                 success: false,
-                message: err.message
+                message: "Internal Service Error"
             })
         }
     }
@@ -35,7 +35,7 @@ class AuthController{
         try{
             const check = await UserModel.getUserByEmail(req.body.Email);
             if(!check){
-                return res.status(401).json({
+                return res.status(404).json({
                     success: false,
                     message: "User not found"
                 })
@@ -65,7 +65,7 @@ class AuthController{
         catch(err){
             return res.status(500).json({
                 success: false,
-                message: err.message
+                message: "Internal Service Error"
             })
         }
     }
@@ -73,7 +73,7 @@ class AuthController{
         try{
             const check = await UserModel.getUserByEmail(req.body.Email);
             if(!check){
-                return res.status(401).json({
+                return res.status(404).json({
                     success: false,
                     message: "User not found"
                 })
@@ -87,7 +87,7 @@ class AuthController{
         catch(err){
             return res.status(500).json({
                 success : false,
-                message: err.message
+                message: "Internal Service Error"
             })
         }
     }
@@ -96,14 +96,14 @@ class AuthController{
             const Time = Date.now();
             const token = req.headers.authorization.split(' ')[1];
             if(!token){
-                return res.status(401).json({
+                return res.status(404).json({
                     success: false,
                     message: "Token not found"
                 })
             }
             const check = await UserModel.getUserByToken(token);
             if(!check){
-                return res.status(401).json({
+                return res.status(404).json({
                     success: false,
                     message: "User not found"
                 })
@@ -123,7 +123,7 @@ class AuthController{
         catch(err){
             return res.status(500).json({
                 success : false,
-                message: err.message
+                message: "Internal Service Error"
             })
         }
     }
