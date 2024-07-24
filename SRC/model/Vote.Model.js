@@ -12,6 +12,7 @@ class VoteModel{
         try{
             const connection = await pool.getConnection();
             const [rows,fields] = await connection.query("Select * from Votes where UserID=? and OptionID=?",[UserID,OptionID]);
+            connection.release();
             return rows[0];
         }catch(err){
             console.log("ERR VoteModel: ",err);
@@ -27,6 +28,7 @@ class VoteModel{
             `;
             const value = [NewVote.OptionID, NewVote.UserID];
             await connection.query(query,value);
+            connection.release();
             return 1;
         }catch(err){
             console.log("ERR VoteModel: ",err);
@@ -41,6 +43,7 @@ class VoteModel{
             `;
             const value = [DelVote.OptionID, DelVote.UserID];
             await connection.query(query,value);
+            connection.release();
             return 1;
         }catch(err){
             console.log("ERR VoteModel: ",err);

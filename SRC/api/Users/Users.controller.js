@@ -11,20 +11,18 @@ class UsersController{
             const ID = parseInt(req.params.PollID);
             const Poll = await UsersService.GetPollByID(ID);
             if(Poll == null || Poll.UserID != parseInt(req.decode.UserID)){
-                return res.status(404).json({
-                    success: false,
-                    message: "Poll not found"
-                })
+                const Err = new Error("Poll not found");
+                Err.status=404;
+                return next(Err);
             }
             return res.status(200).json({
                 success: true,
                 Polls: Poll
             })
         }catch(err){
-            return res.status(500).json({
-                success: false,
-                message: "Internal Service Error"
-            })
+            const Err = new Error("Internal Service Error");
+            err.status=500;
+            return next(Err);
         }
     }
     async GetPollByUserID(req,res,next){
@@ -33,20 +31,18 @@ class UsersController{
             const Polls = await PollModel.getPollByUserID(UserID);
             console.log(Polls);
             if(Polls.length === 0){
-                return res.status(404).json({
-                    success: false,
-                    message: "Poll not found"
-                })
+                const Err = new Error("Poll not found");
+                Err.status=404;
+                return next(Err);
             }
             return res.status(200).json({
                 success: true,
                 Polls: Polls
             })
         }catch(err){
-            return res.status(500).json({
-                success: false,
-                message: "Internal Service Error"
-            })
+            const Err = new Error("Internal Service Error");
+            err.status=500;
+            return next(Err);
         }
     }
     async CreatePoll(req,res,next){
@@ -62,10 +58,9 @@ class UsersController{
                 message: "Create pool successfull"
             })
         }catch(err){
-            return res.status(500).json({
-                success: false,
-                message: "Internal Service Error"
-            })
+            const Err = new Error("Internal Service Error");
+            err.status=500;
+            return next(Err);
         }
     }
     async UpdatePoll(req,res,next){
@@ -75,16 +70,18 @@ class UsersController{
             const Title = req.body.Title;
             const Poll = await PollModel.getPollByID(PollID);
             if(!Poll){
-                return res.status(404).json({
-                    success: false,
-                    message: "Poll not found"
-                })
+                const Err = new Error("Poll not found");
+                Err.status=404;
+                return next(Err);
             }
             if(Poll.UserID != UserID){
-                return res.status(405).json({
-                    success: false,
-                    message: "You can't update this poll"
-                })
+                // return res.status(405).json({
+                //     success: false,
+                //     message: "You can't update this poll"
+                // })
+                const Err = new Error("You can't update this poll");
+                Err.status=405;
+                return next(Err);
             }
             UsersService.UpdatePoll(PollID,Title);
             return res.status(200).json({
@@ -93,10 +90,9 @@ class UsersController{
             })
         }
         catch(err){
-            return res.status(500).json({
-                success: false,
-                message: "Internal Service Error"
-            })
+            const Err = new Error("Internal Service Error");
+            err.status=500;
+            return next(Err);
         }
     }
     async DeletePoll(req,res,next){
@@ -104,16 +100,18 @@ class UsersController{
             const PollID = parseInt(req.params.PollID);
             const Poll = await PollModel.getPollByID(PollID);
             if(!Poll){
-                return res.status(404).json({
-                    success: false,
-                    message: "Poll not found"
-                })
+                const Err = new Error("Poll not found");
+                Err.status=404;
+                return next(Err);
             }
             if(Poll.UserID != parseInt(req.decode.UserID)){
-                return res.status(405).json({
-                    success: false,
-                    message: "You can't delete this poll"
-                })
+                // return res.status(405).json({
+                //     success: false,
+                //     message: "You can't delete this poll"
+                // })
+                const Err = new Error("You can't delete this poll");
+                Err.status=405;
+                return next(Err);
             }
             PollModel.DeletePoll(PollID);
             return res.status(200).json({
@@ -121,10 +119,9 @@ class UsersController{
                 message: "Delete successful"
             })
         }catch(err){
-            return res.status(500).json({
-                success: false,
-                message: "Internal Service Error"
-            })
+            const Err = new Error("Internal Service Error");
+            err.status=500;
+            return next(Err);
         }
     }
 
@@ -135,16 +132,18 @@ class UsersController{
             const Poll= await PollModel.getPollByID(req.body.PollID);
             if(!Poll)
             {
-                return res.status(404).json({
-                    success : false,
-                    message: "Poll not found"
-                })
+                const Err = new Error("Poll not found");
+                Err.status=404;
+                return next(Err);
             }
             if(await OptionModel.GetOptionByContent(req.body.Content)){
-                return res.status(409).json({
-                    success : false,
-                    message: "This option already exit"
-                })
+                // return res.status(409).json({
+                //     success : false,
+                //     message: "This option already exit"
+                // })
+                const Err = new Error("This option already exit");
+                Err.status=409;
+                return next(Err);
             }
             const NewOption= {
                 PollID: req.body.PollID,
@@ -156,10 +155,9 @@ class UsersController{
                 message: "Create Option successful"
             })
         }catch(err){
-            return res.status(500).json({
-                success: false,
-                message: "Internal Service Error"
-            })
+            const Err = new Error("Internal Service Error");
+            err.status=500;
+            return next(Err);
         }
     }
     async GetOption(req,res,next){
@@ -167,17 +165,15 @@ class UsersController{
             if(req.query.PollID){
                 const Poll= await PollModel.getPollByID(req.query.PollID);
                 if(!Poll){
-                    return res.status(404).json({
-                        success: false,
-                        message: "Poll not found"
-                    })
+                    const Err = new Error("Poll not found");
+                    Err.status=404;
+                    return next(Err);
                 }
                 const Options = await OptionModel.GetOptionByPollID(req.query.PollID);
                 if(Options.length == 0) {
-                    return res.status(404).json({
-                        success: false,
-                        message: "Option not found"
-                    })
+                    const Err = new Error("Option not found");
+                    Err.status=404;
+                    return next(Err);
                 }
                 return res.status(200).json({
                     success: true,
@@ -188,10 +184,9 @@ class UsersController{
             if(req.query.OptionID){
                 const Option = await OptionModel.GetOptionByOptionID(req.query.OptionID);
                 if(!Option){
-                    return res.status(404).json({
-                        success: false,
-                        message: "Option not found"
-                    })
+                    const Err = new Error("Option not found");
+                    Err.status=404;
+                    return next(Err);
                 }
                 return res.status(200).json({
                     success: true,
@@ -199,10 +194,9 @@ class UsersController{
                 })
             }
         }catch(err){
-            return res.status(500).json({
-                success: false,
-                message: "Internal Service Error"
-            })
+            const Err = new Error("Internal Service Error");
+            err.status=500;
+            return next(Err);
         }
     }
 
@@ -212,16 +206,18 @@ class UsersController{
             const OptionID = req.body.OptionID;
             const CheckOption = await OptionModel.GetOptionByOptionID(OptionID);
             if(!CheckOption){
-                return res.status(404).json({
-                    success: false,
-                    message: "Option not found"
-                })
+                const Err = new Error("Option not found");
+                Err.status=404;
+                return next(Err);
             }
             if(await VoteModel.GetVoteByUserIDAndOptionID(req.decode.UserID, OptionID)){
-                return res.status(409).json({
-                    success: false,
-                    message: "Vote already exist"
-                })
+                const Err = new Error("Vote already exist");
+                Err.status=409;
+                return next(Err);
+                // return res.status(409).json({
+                //     success: false,
+                //     message: "Vote already exist"
+                // })
             }
             const NewVote={
                 OptionID: OptionID,
@@ -233,10 +229,9 @@ class UsersController{
                 message:"Vote successfully"
             })
         }catch(err){
-            return res.status(500).json({
-                success: false,
-                message: "Internal Service Error"
-            })
+            const Err = new Error("Internal Service Error");
+            err.status=500;
+            return next(Err);
         }
     }
 
@@ -245,21 +240,20 @@ class UsersController{
             const OptionID = req.body.OptionID;
             const CheckOption = await OptionModel.GetOptionByOptionID(OptionID);
             if(!CheckOption){
-                return res.status(404).json({
-                    success: false,
-                    message: "Option not found"
-                })
+                const Err = new Error("Option not found");
+                Err.status=404;
+                return next(Err);
             }
             if(!(await VoteModel.GetVoteByUserIDAndOptionID(req.decode.UserID, OptionID))){
-                return res.status(404).json({
-                    success: false,
-                    message: "Vote not found"
-                })
+                const Err = new Error("Vote not found");
+                Err.status=404;
+                return next(Err);
             }
             const DelVote={
                 OptionID: OptionID,
                 UserID: req.decode.UserID
             }
+            console.log(DelVote);
             await UsersService.DeleteVote(DelVote);
             return res.status(200).json({
                 success: true,
@@ -267,10 +261,9 @@ class UsersController{
             })
 
         }catch(err){
-            return res.status(500).json({
-                success: false,
-                message: "Internal Service Error"
-            })
+            const Err = new Error("Internal Service Error");
+            err.status=500;
+            return next(Err);
         }
     }
 }
