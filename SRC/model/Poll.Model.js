@@ -24,8 +24,8 @@ class PollModel{
     async getPollByID(id){
         try{
             const connection = await pool.getConnection();
-            const [rows,fields] = connection.query('Select * from Polls where PollID = ?',[id]);
-            //console.log(rows);
+            const [rows,fields] = await connection.query('Select * from Polls where PollID = ?',[id]);
+            // console.log(rows);
             connection.release();
             return rows[0];
         }
@@ -37,8 +37,7 @@ class PollModel{
     async getPollByUserID(UserID){
         try{
             const connection = await pool.getConnection();
-            const [rows,fields] = connection.query('Select * from Polls where UserID = ?',[UserID]);
-            //console.log(rows);
+            const [rows,fields] =await connection.query('Select * from Polls where UserID = ?',[UserID]);
             connection.release();
             return rows;
         }
@@ -49,12 +48,13 @@ class PollModel{
     }
     async addPoll(Poll){
         try{
+            const Day = new Date(Date.now());
             const connection = await pool.getConnection();
             const query = `
                 Insert into Polls (Title, UserID, Day)
                 VALUE (?,?,?)`
             ;
-            const value= [Poll.Title,Poll.UserID,Date.now()];
+            const value= [Poll.Title,Poll.UserID,Day];
             await connection.query(query,value);
             //console.log("AddPoll ok");
             connection.release();
@@ -65,28 +65,27 @@ class PollModel{
             throw err;
         }
     }
-    async UpdatePoll(id,Content){
-        try{
+    async UpdatePoll(PollID,Title){
+        try {
             const connection = await pool.getConnection();
             const query = `
-                Update Polls
-                Set Content = ?
-                where PollID = ?
+                UPDATE Polls
+                SET Title = ?
+                WHERE PollID = ?
             `;
-            const value = [Content,id];
-            await connection.query(query,value);
+            const values = [Title, PollID];
+            await connection.query(query, values);
             connection.release();
-            return ;
-        }
-        catch(err){
-            console.log("ERR PollModel Update: ",err);
+            return;
+        } catch (err) {
+            console.log("Error in PollModel updatePoll: ", err);
             throw err;
         }
     }
     async DeletePoll(id){
         try{
             const connection = await pool.getConnection();
-            await connection.query('Delete From Users where PollID = ?',[id]);
+            await connection.query('Delete From Polls where PollID = ?',[id]);
             connection.release();
             return ;
         }
