@@ -2,7 +2,6 @@ import Authentication from "../Authentication/Authentication";
 
 const verify = function(req, res, next) {
     let Token = req.headers.authorization;
-    const Day = Date.now();
     if (!Token) {
         return res.status(403).json({
             success: false,

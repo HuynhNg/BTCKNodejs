@@ -6,7 +6,7 @@ class AuthController{
     async Register(req,res,next){
         try{
             const check = await UserModel.getUserByEmail(req.body.Email);
-            console.log(check);
+            // console.log(check);
             if(check){
                 // return res.status(409).json({
                 //     success: false,
