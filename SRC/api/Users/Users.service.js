@@ -19,14 +19,14 @@ class UsersService{
     }
     async CreatePoll(NewPoll){
         try{
-            await PollModel.addPoll(NewPoll);
+           return  await PollModel.addPoll(NewPoll);
         }catch(err){
             throw err;
         }
     }
     async UpdatePoll(PollID,Title){
         try{
-            await PollModel.UpdatePoll(PollID,Title);
+            return await PollModel.UpdatePoll(PollID,Title);
         }
         catch(err){
             throw err;
@@ -37,7 +37,7 @@ class UsersService{
     //Option
     async CreateOption(NewOption){
         try{
-            await OptionModel.CreateOption(NewOption);
+            return await OptionModel.CreateOption(NewOption);
         }catch(err){
             throw err;
         }
@@ -46,23 +46,28 @@ class UsersService{
     // Vote
     async CreateVote(NewVote){
         try{
-            const Quantity = parseInt((await OptionModel.GetOptionByOptionID(NewVote.OptionID)).Quantity)+1;
-            if(await VoteModel.CreateVote(NewVote)){
-                await OptionModel.UpdateQuantity(NewVote.OptionID, Quantity);
-            }
+            await VoteModel.CreateVote(NewVote);
+            const Option = await OptionModel.GetOptionByOptionID(NewVote.OptionID);
+            const Quantity = Option.Quantity+1;
+            await OptionModel.UpdateQuantity(NewVote.OptionID,Quantity);
+            return;
         }catch(err){
             throw err;
         }
     }
     async DeleteVote(DelVote){
         try{
-            const Quantity = parseInt((await OptionModel.GetOptionByOptionID(DelVote.OptionID)).Quantity)-1;
-            if(await VoteModel.DeleteVote(DelVote)){
-                await OptionModel.UpdateQuantity(DelVote.OptionID, Quantity);
-            }
+            await VoteModel.DeleteVote(DelVote);
+            const Option = await OptionModel.GetOptionByOptionID(DelVote.OptionID);
+            const Quantity = Option.Quantity-1;
+            await OptionModel.UpdateQuantity(DelVote.OptionID,Quantity);
+            return ;
         }catch(err){
             throw err;
         }
     }
+    
+
+    
 }
 export default new UsersService();

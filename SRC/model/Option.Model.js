@@ -18,6 +18,7 @@ class OptionModel{
             `;
             const value= [NewOption.PollID, NewOption.Content];
             await connection.query(query,value);
+            connection.release();
             return;
         }
         catch(err){
@@ -29,6 +30,7 @@ class OptionModel{
         try{
             const connection = await pool.getConnection();
             const [rows,fields] = await connection.query("Select * from Options where Content=?",[Content]);
+            connection.release();
             return rows[0];
         }
         catch(err){
@@ -40,6 +42,7 @@ class OptionModel{
         try{
             const connection = await pool.getConnection();
             const [rows,fields] = await connection.query("Select * from Options where PollID=?",[PollID]);
+            connection.release();
             return rows;
         }catch(err){
             console.log("ERR GetOptionByPollID: ",err);
@@ -50,6 +53,7 @@ class OptionModel{
         try{
             const connection = await pool.getConnection();
             const [rows,fields] = await connection.query("Select * from Options where OptionID=?",[OptionID]);
+            connection.release();
             return rows[0];
         }catch(err){
             console.log("ERR GetOptionByOptionID: ",err);
@@ -66,6 +70,7 @@ class OptionModel{
             `;
             const value= [Quantity, OptionID];
             await connection.query(query,value);
+            connection.release();
             return ;
         }
         catch(err){
@@ -74,4 +79,4 @@ class OptionModel{
         }
     }
 }
-export default new OptionModel;
+export default  OptionModel = new OptionModel();
