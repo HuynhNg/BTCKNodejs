@@ -118,16 +118,16 @@ class UserModel{
     async SetTokenReset(TokenReset,Email){
         try{
             const connection = await pool.getConnection();
-            const Expried = new Date(Date.now() + parseInt(process.env.Time));
+            const Expired = new Date(Date.now() + parseInt(process.env.Time));
 
-            console.log(Expried);
+            // console.log(Expired);
             const query = `
                 UPDATE Users
-                SET TokenReset=? , Expried = ?
+                SET TokenReset=? , Expired = ?
                 WHERE Email=?
             `;
-            const values = [TokenReset,Expried,Email];
-            // console.log( TokenReset, ' ', Expried, ' ' , Email )
+            const values = [TokenReset,Expired,Email];
+            // console.log( TokenReset, ' ', Expired, ' ' , Email )
             await connection.query(query, values);
             connection.release();
             return ;
