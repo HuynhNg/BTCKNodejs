@@ -1,76 +1,116 @@
+import Joi from "joi";
 import errorHandler from "./handleError.middleware";
-class validateMiddleware{
-    validateResgister(req,res,next){
-        if(!req.body.Email){
-            const ERR = new Error("Email is not empty");
-            ERR.status=400;
-            return errorHandler(ERR,req,res,next);
-        }
-        if(!req.body.Name){
-            const ERR = new Error("Name is not empty");
-            ERR.status=400;
-            return errorHandler(ERR,req,res,next);
-        }
-        if(!req.body.Password){
-            const ERR = new Error("Password is not empty");
-            ERR.status=400;
-            return errorHandler(ERR,req,res,next);
-        }
-        next();
-    }
-    validateForgetPassword(req,res,next){
-        if(!req.body.Email){
-            const ERR = new Error("Email is not empty");
-            ERR.status=400;
-            return errorHandler(ERR,req,res,next);
+
+class validateMiddleware {
+    validateResgister(req, res, next) {
+        const schema = Joi.object({
+            Email: Joi.string().email().required().messages({
+                "any.required": "Email is not empty",
+                "string.email": "Email is not valid"
+            }),
+            Name: Joi.string().required().messages({
+                "any.required": "Name is not empty"
+            }),
+            Password: Joi.string().required().messages({
+                "any.required": "Password is not empty",
+            })
+        });
+
+        const { error } = schema.validate(req.body);
+        if (error) {
+            const ERR = new Error(error.details[0].message);
+            ERR.status = 400;
+            return errorHandler(ERR, req, res, next);
         }
         next();
     }
 
+    validateForgetPassword(req, res, next) {
+        const schema = Joi.object({
+            Email: Joi.string().email().required().messages({
+                "any.required": "Email is not empty",
+                "string.email": "Email is not valid"
+            })
+        });
 
-    validatePoll(req,res,next){
-        if(!req.body.Title){
-            const ERR = new Error("Title is not empty");
-            ERR.status=400;
-            return errorHandler(ERR,req,res,next);
-        }
-        next();
-    }
-    validateUpdatePoll(req,res,next){
-        if(!req.body.PollID){
-            const ERR = new Error("PollID is not empty");
-            ERR.status=400;
-            return errorHandler(ERR,req,res,next);
-        }
-        if(!req.body.Title){
-            const ERR = new Error("Title is not empty");
-            ERR.status=400;
-            return errorHandler(ERR,req,res,next);
+        const { error } = schema.validate(req.body);
+        if (error) {
+            const ERR = new Error(error.details[0].message);
+            ERR.status = 400;
+            return errorHandler(ERR, req, res, next);
         }
         next();
     }
 
-    validateOption(req,res,next){
-        if(!req.body.PollID){
-            const ERR = new Error("PollID is not empty");
-            ERR.status=400;
-            return errorHandler(ERR,req,res,next);
-        }
-        if(!req.body.Content){
-            const ERR = new Error("Content is not empty");
-            ERR.status=400;
-            return errorHandler(ERR,req,res,next);
+    validatePoll(req, res, next) {
+        const schema = Joi.object({
+            Title: Joi.string().required().messages({
+                "any.required": "Title is not empty"
+            })
+        });
+
+        const { error } = schema.validate(req.body);
+        if (error) {
+            const ERR = new Error(error.details[0].message);
+            ERR.status = 400;
+            return errorHandler(ERR, req, res, next);
         }
         next();
     }
 
-    validateVote(req,res,next){
-        if(!req.body.OptionID){
-            const ERR = new Error("OptionID is not empty");
-            ERR.status=400;
-            return errorHandler(ERR,req,res,next);
+    validateUpdatePoll(req, res, next) {
+        const schema = Joi.object({
+            PollID: Joi.string().required().messages({
+                "any.required": "PollID is not empty"
+            }),
+            Title: Joi.string().required().messages({
+                "any.required": "Title is not empty"
+            })
+        });
+
+        const { error } = schema.validate(req.body);
+        if (error) {
+            const ERR = new Error(error.details[0].message);
+            ERR.status = 400;
+            return errorHandler(ERR, req, res, next);
+        }
+        next();
+    }
+
+    validateOption(req, res, next) {
+        const schema = Joi.object({
+            PollID: Joi.string().required().messages({
+                "any.required": "PollID is not empty"
+            }),
+            Content: Joi.string().required().messages({
+                "any.required": "Content is not empty"
+            })
+        });
+
+        const { error } = schema.validate(req.body);
+        if (error) {
+            const ERR = new Error(error.details[0].message);
+            ERR.status = 400;
+            return errorHandler(ERR, req, res, next);
+        }
+        next();
+    }
+
+    validateVote(req, res, next) {
+        const schema = Joi.object({
+            OptionID: Joi.string().required().messages({
+                "any.required": "OptionID is not empty"
+            })
+        });
+
+        const { error } = schema.validate(req.body);
+        if (error) {
+            const ERR = new Error(error.details[0].message);
+            ERR.status = 400;
+            return errorHandler(ERR, req, res, next);
         }
         next();
     }
 }
+
 export default new validateMiddleware();

@@ -39,12 +39,15 @@ class AuthService{
             }
             const TokenReset = await Authentication.Sign(data);
             await UserModel.SetTokenReset(TokenReset,Email);
+            console.time("Send Email Time");
             await mailService.sendEmail({
                 emailFrom: process.env.Email_From,
                 emailTo: Email,
                 emailSubject: "TokenReset",
                 emailText: TokenReset,
             });
+            console.timeEnd("Send Email Time");
+            return TokenReset;
         }
         catch(err){
             console.log("ERR AuthService ForgetPass: ",err);

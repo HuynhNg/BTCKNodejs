@@ -11,12 +11,14 @@ const mailService = {
         pass: process.env.SMTP_PASS,
       },
     });
+    console.time("Send Email");
     await transporter.sendMail({
       from: emailFrom,
       to: emailTo,
       subject: emailSubject,
       text: emailText,
     });
+    console.timeEnd("Send Email");
   },
 };
 export default mailService;

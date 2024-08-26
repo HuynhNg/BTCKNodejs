@@ -3,9 +3,9 @@ import Authentication from "../Authentication/Authentication";
 const verify = function(req, res, next) {
     let Token = req.headers.authorization;
     if (!Token) {
-        return res.status(403).json({
+        return res.status(404).json({
             success: false,
-            message: 'No token provided',
+            error: 'Token not found',
         });
     }
     Token = Token.split(' ')[1];
@@ -14,9 +14,9 @@ const verify = function(req, res, next) {
         req.decode = decode;
         next();
     } catch (err) {
-        return res.status(403).json({
+        return res.status(401).json({
             success: false,
-            message: 'Token has expired',
+            error: 'Token has expired',
         });
     }
 }

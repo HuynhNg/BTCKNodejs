@@ -26,10 +26,10 @@ class OptionModel{
             throw err;
         }
     }
-    async GetOptionByContent(Content){
+    async GetOptionByContent(Content,PollID){
         try{
             const connection = await pool.getConnection();
-            const [rows,fields] = await connection.query("Select * from Options where Content=?",[Content]);
+            const [rows,fields] = await connection.query("Select * from Options where Content=? and PollID=?",[Content,PollID]);
             connection.release();
             return rows[0];
         }

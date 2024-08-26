@@ -23,7 +23,7 @@ class AuthController{
                 Password: pass
             }
             await AuthService.RegisterUser(NewUser);
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
                 message: 'Created User'
             })
@@ -93,10 +93,10 @@ class AuthController{
                 Err.status=404;
                 return next(Err);
             }
-            await AuthService.ForgetPassword(req.body.Email);
+            const TokenReset=await AuthService.ForgetPassword(req.body.Email);
             return res.status(200).json({
                 success: true,
-                message: "Send mail"
+                token: TokenReset
             })
         }
         catch(err){
@@ -108,19 +108,23 @@ class AuthController{
     async ResetPassword(req,res,next){
         try{
             const Time = Date.now();
-            const token = req.headers.authorization.split(' ')[1];
-            if(!token){
+            if (!(req.headers.authorization && req.headers.authorization.startsWith('Bearer '))) {
                 const Err = new Error("Token not found");
-                Err.status=404;
+                Err.status = 404;
                 return next(Err);
             }
+    
+            const token = req.headers.authorization.split(' ')[1];
+            // console.log(token);
             const check = await UserModel.getUserByToken(token);
             if(!check){
                 const Err = new Error("User not found");
                 Err.status=404;
                 return next(Err);
             }
-            if(check.Expried < Time){
+            // console.log(check);
+            // console.log(check.Expried + "   "+ Time);
+            if(check.Expired < Time){
                 const Err = new Error("Token has expired");
                 Err.status=401;
                 return next(Err);
